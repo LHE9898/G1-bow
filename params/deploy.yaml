@@ -1,0 +1,225 @@
+joint_ids_map: [0, 6, 12, 1, 7, 13, 2, 8, 14, 3, 9, 15, 22, 4, 10, 16, 23, 5, 11,
+  17, 24, 18, 25, 19, 26, 20, 27, 21, 28]
+step_dt: 0.02
+stiffness: [100.0, 100.0, 100.0, 150.0, 40.0, 40.0, 100.0, 100.0, 100.0, 150.0, 40.0,
+  40.0, 200.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0, 40.0,
+  40.0, 40.0, 40.0, 40.0]
+damping: [2.0, 2.0, 2.0, 4.0, 2.0, 2.0, 2.0, 2.0, 2.0, 4.0, 2.0, 2.0, 5.0, 5.0, 5.0,
+  1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+default_joint_pos: [-0.1, -0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 0.3, 0.3,
+  0.3, -0.2, -0.2, 0.25, -0.25, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.15, -0.15, 0.0, 0.0,
+  0.0, 0.0]
+commands: {}
+actions:
+  bow: {clip: null, delta_q_limit: 0.2}
+observations:
+  body_joint_pos:
+    params:
+      asset_cfg:
+        name: robot
+        joint_names: [left_hip_pitch_joint, right_hip_pitch_joint, waist_yaw_joint,
+          waist_roll_joint, waist_pitch_joint]
+        joint_ids: [0, 1, 2, 5, 8]
+        fixed_tendon_names: null
+        fixed_tendon_ids: !!python/object/apply:builtins.slice [null, null, null]
+        body_names: null
+        body_ids: !!python/object/apply:builtins.slice [null, null, null]
+        object_collection_names: null
+        object_collection_ids: !!python/object/apply:builtins.slice [null, null, null]
+        preserve_order: false
+    clip: null
+    scale: [1.0, 1.0, 1.0, 1.0, 1.0]
+    history_length: 1
+  body_joint_vel:
+    params:
+      asset_cfg:
+        name: robot
+        joint_names: [left_hip_pitch_joint, right_hip_pitch_joint, waist_yaw_joint,
+          waist_roll_joint, waist_pitch_joint]
+        joint_ids: [0, 1, 2, 5, 8]
+        fixed_tendon_names: null
+        fixed_tendon_ids: !!python/object/apply:builtins.slice [null, null, null]
+        body_names: null
+        body_ids: !!python/object/apply:builtins.slice [null, null, null]
+        object_collection_names: null
+        object_collection_ids: !!python/object/apply:builtins.slice [null, null, null]
+        preserve_order: false
+    clip: null
+    scale: [1.0, 1.0, 1.0, 1.0, 1.0]
+    history_length: 1
+  torso_gravity:
+    params:
+      asset_cfg:
+        name: robot
+        joint_names: null
+        joint_ids: !!python/object/apply:builtins.slice [null, null, null]
+        fixed_tendon_names: null
+        fixed_tendon_ids: !!python/object/apply:builtins.slice [null, null, null]
+        body_names: null
+        body_ids: !!python/object/apply:builtins.slice [null, null, null]
+        object_collection_names: null
+        object_collection_ids: !!python/object/apply:builtins.slice [null, null, null]
+        preserve_order: false
+    clip: null
+    scale: [1.0, 1.0, 1.0]
+    history_length: 1
+  torso_ang_vel_obs:
+    params:
+      asset_cfg:
+        name: robot
+        joint_names: null
+        joint_ids: !!python/object/apply:builtins.slice [null, null, null]
+        fixed_tendon_names: null
+        fixed_tendon_ids: !!python/object/apply:builtins.slice [null, null, null]
+        body_names: null
+        body_ids: !!python/object/apply:builtins.slice [null, null, null]
+        object_collection_names: null
+        object_collection_ids: !!python/object/apply:builtins.slice [null, null, null]
+        preserve_order: false
+    clip: null
+    scale: [1.0, 1.0, 1.0]
+    history_length: 1
+  hip_pitch_err:
+    params:
+      asset_cfg:
+        name: robot
+        joint_names: [left_hip_pitch_joint, right_hip_pitch_joint]
+        joint_ids: [0, 1]
+        fixed_tendon_names: null
+        fixed_tendon_ids: !!python/object/apply:builtins.slice [null, null, null]
+        body_names: null
+        body_ids: !!python/object/apply:builtins.slice [null, null, null]
+        object_collection_names: null
+        object_collection_ids: !!python/object/apply:builtins.slice [null, null, null]
+        preserve_order: false
+    clip: null
+    scale: [1.0, 1.0]
+    history_length: 1
+  waist_pitch_err:
+    params:
+      asset_cfg:
+        name: robot
+        joint_names: [waist_pitch_joint]
+        joint_ids: [8]
+        fixed_tendon_names: null
+        fixed_tendon_ids: !!python/object/apply:builtins.slice [null, null, null]
+        body_names: null
+        body_ids: !!python/object/apply:builtins.slice [null, null, null]
+        object_collection_names: null
+        object_collection_ids: !!python/object/apply:builtins.slice [null, null, null]
+        preserve_order: false
+    clip: null
+    scale: [1.0]
+    history_length: 1
+  left_arm_pos:
+    params:
+      asset_cfg:
+        name: robot
+        joint_names: [left_shoulder_pitch_joint, left_shoulder_roll_joint, left_shoulder_yaw_joint,
+          left_elbow_joint, left_wrist_roll_joint, left_wrist_pitch_joint, left_wrist_yaw_joint]
+        joint_ids: [11, 15, 19, 21, 23, 25, 27]
+        fixed_tendon_names: null
+        fixed_tendon_ids: !!python/object/apply:builtins.slice [null, null, null]
+        body_names: null
+        body_ids: !!python/object/apply:builtins.slice [null, null, null]
+        object_collection_names: null
+        object_collection_ids: !!python/object/apply:builtins.slice [null, null, null]
+        preserve_order: false
+    clip: null
+    scale: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+    history_length: 1
+  left_arm_vel:
+    params:
+      asset_cfg:
+        name: robot
+        joint_names: [left_shoulder_pitch_joint, left_shoulder_roll_joint, left_shoulder_yaw_joint,
+          left_elbow_joint, left_wrist_roll_joint, left_wrist_pitch_joint, left_wrist_yaw_joint]
+        joint_ids: [11, 15, 19, 21, 23, 25, 27]
+        fixed_tendon_names: null
+        fixed_tendon_ids: !!python/object/apply:builtins.slice [null, null, null]
+        body_names: null
+        body_ids: !!python/object/apply:builtins.slice [null, null, null]
+        object_collection_names: null
+        object_collection_ids: !!python/object/apply:builtins.slice [null, null, null]
+        preserve_order: false
+    clip: null
+    scale: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+    history_length: 1
+  left_hand_contact_obs:
+    params:
+      left_hand_cfg:
+        name: left_hand_contact
+        joint_names: null
+        joint_ids: !!python/object/apply:builtins.slice [null, null, null]
+        fixed_tendon_names: null
+        fixed_tendon_ids: !!python/object/apply:builtins.slice [null, null, null]
+        body_names: null
+        body_ids: !!python/object/apply:builtins.slice [null, null, null]
+        object_collection_names: null
+        object_collection_ids: !!python/object/apply:builtins.slice [null, null, null]
+        preserve_order: false
+    clip: null
+    scale: [1.0]
+    history_length: 1
+  left_hand_to_table:
+    params:
+      asset_cfg:
+        name: robot
+        joint_names: null
+        joint_ids: !!python/object/apply:builtins.slice [null, null, null]
+        fixed_tendon_names: null
+        fixed_tendon_ids: !!python/object/apply:builtins.slice [null, null, null]
+        body_names: null
+        body_ids: !!python/object/apply:builtins.slice [null, null, null]
+        object_collection_names: null
+        object_collection_ids: !!python/object/apply:builtins.slice [null, null, null]
+        preserve_order: false
+      left_hand_body_name: left_wrist_roll_link
+      table_top_z: 0.65
+    clip: null
+    scale: [1.0, 1.0, 1.0]
+    history_length: 1
+  foot_contact:
+    params:
+      left_foot_cfg:
+        name: left_foot_contact
+        joint_names: null
+        joint_ids: !!python/object/apply:builtins.slice [null, null, null]
+        fixed_tendon_names: null
+        fixed_tendon_ids: !!python/object/apply:builtins.slice [null, null, null]
+        body_names: null
+        body_ids: !!python/object/apply:builtins.slice [null, null, null]
+        object_collection_names: null
+        object_collection_ids: !!python/object/apply:builtins.slice [null, null, null]
+        preserve_order: false
+      right_foot_cfg:
+        name: right_foot_contact
+        joint_names: null
+        joint_ids: !!python/object/apply:builtins.slice [null, null, null]
+        fixed_tendon_names: null
+        fixed_tendon_ids: !!python/object/apply:builtins.slice [null, null, null]
+        body_names: null
+        body_ids: !!python/object/apply:builtins.slice [null, null, null]
+        object_collection_names: null
+        object_collection_ids: !!python/object/apply:builtins.slice [null, null, null]
+        preserve_order: false
+    clip: null
+    scale: [1.0]
+    history_length: 1
+  right_arm_pos:
+    params:
+      asset_cfg:
+        name: robot
+        joint_names: [right_shoulder_pitch_joint, right_shoulder_roll_joint, right_shoulder_yaw_joint,
+          right_elbow_joint, right_wrist_roll_joint, right_wrist_pitch_joint, right_wrist_yaw_joint]
+        joint_ids: [12, 16, 20, 22, 24, 26, 28]
+        fixed_tendon_names: null
+        fixed_tendon_ids: !!python/object/apply:builtins.slice [null, null, null]
+        body_names: null
+        body_ids: !!python/object/apply:builtins.slice [null, null, null]
+        object_collection_names: null
+        object_collection_ids: !!python/object/apply:builtins.slice [null, null, null]
+        preserve_order: false
+    clip: null
+    scale: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+    history_length: 1
