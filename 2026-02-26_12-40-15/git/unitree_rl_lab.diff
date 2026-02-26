@@ -1,0 +1,121 @@
+--- git status ---
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   scripts/list_envs.py
+	modified:   scripts/rsl_rl/train.py
+	modified:   source/unitree_rl_lab/unitree_rl_lab/assets/robots/unitree.py
+	modified:   source/unitree_rl_lab/unitree_rl_lab/utils/export_deploy_cfg.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	source/unitree_rl_lab/unitree_rl_lab/tasks/g1_lean/
+	source/unitree_rl_lab/unitree_rl_lab/tasks/g1_lean_push/
+	source/unitree_rl_lab/unitree_rl_lab/tasks/g1_task_state2/
+	unitree_model/
+	unitree_rl_lab.bat
+
+no changes added to commit (use "git add" and/or "git commit -a") 
+
+
+--- git diff ---
+diff --git a/scripts/list_envs.py b/scripts/list_envs.py
+index 5324af9..30b0b63 100644
+--- a/scripts/list_envs.py
++++ b/scripts/list_envs.py
+@@ -58,7 +58,7 @@ def _walk_packages(
+ 
+ def import_packages():
+     sys.path.insert(0, f"{pathlib.Path(__file__).parent.parent}/source/unitree_rl_lab/unitree_rl_lab/tasks/")
+-    for package in ["locomotion.robots", "mimic.robots"]:
++    for package in ["locomotion.robots", "mimic.robots", "g1_lean_push.robots","g1_task_state2.robots","g1_lean.robots"]:
+         package = importlib.import_module(package)
+         for _ in _walk_packages(package.__path__, package.__name__ + "."):
+             pass
+diff --git a/scripts/rsl_rl/train.py b/scripts/rsl_rl/train.py
+index 28dae91..4c999d6 100644
+--- a/scripts/rsl_rl/train.py
++++ b/scripts/rsl_rl/train.py
+@@ -17,6 +17,7 @@ from list_envs import import_packages  # noqa: F401
+ 
+ sys.path.pop(0)
+ 
++
+ tasks = []
+ for task_spec in gym.registry.values():
+     if "Unitree" in task_spec.id and "Isaac" not in task_spec.id:
+diff --git a/source/unitree_rl_lab/unitree_rl_lab/assets/robots/unitree.py b/source/unitree_rl_lab/unitree_rl_lab/assets/robots/unitree.py
+index e78413a..9e71596 100644
+--- a/source/unitree_rl_lab/unitree_rl_lab/assets/robots/unitree.py
++++ b/source/unitree_rl_lab/unitree_rl_lab/assets/robots/unitree.py
+@@ -17,7 +17,7 @@ from isaaclab.utils import configclass
+ 
+ from unitree_rl_lab.assets.robots import unitree_actuators
+ 
+-UNITREE_MODEL_DIR = "path/to/unitree_model"  # Replace with the actual path to your unitree_model directory
++UNITREE_MODEL_DIR = "C:/Project/unitree_rl_lab/unitree_model"  # Replace with the actual path to your unitree_model directory
+ UNITREE_ROS_DIR = "path/to/unitree_ros"  # Replace with the actual path to your unitree_ros package
+ 
+ 
+@@ -411,7 +411,7 @@ UNITREE_G1_29DOF_CFG = UnitreeArticulationCfg(
+             ".*_shoulder_pitch_joint": 0.3,
+             "left_shoulder_roll_joint": 0.25,
+             "right_shoulder_roll_joint": -0.25,
+-            ".*_elbow_joint": 0.97,
++            ".*_elbow_joint": 0.0,
+             "left_wrist_roll_joint": 0.15,
+             "right_wrist_roll_joint": -0.15,
+         },
+diff --git a/source/unitree_rl_lab/unitree_rl_lab/utils/export_deploy_cfg.py b/source/unitree_rl_lab/unitree_rl_lab/utils/export_deploy_cfg.py
+index 74e7787..bb09dde 100644
+--- a/source/unitree_rl_lab/unitree_rl_lab/utils/export_deploy_cfg.py
++++ b/source/unitree_rl_lab/unitree_rl_lab/utils/export_deploy_cfg.py
+@@ -53,12 +53,17 @@ def export_deploy_cfg(env: ManagerBasedRLEnv, log_dir):
+     cfg["actions"] = {}
+     for action_name, action_term in action_terms:
+         term_cfg = action_term.cfg.copy()
+-        if isinstance(term_cfg.scale, float):
+-            term_cfg.scale = [term_cfg.scale for _ in range(action_term.action_dim)]
+-        else:  # dict
+-            term_cfg.scale = action_term._scale[0].detach().cpu().numpy().tolist()
++        scale = getattr(term_cfg, "scale", None)
++        if scale is not None:
++            if isinstance(scale, float):
++                term_cfg.scale = [scale for _ in range(action_term.action_dim)]
++            elif hasattr(action_term, "_scale"):
++                term_cfg.scale = action_term._scale[0].detach().cpu().numpy().tolist()
++            else:
++                term_cfg.scale = [1.0] * action_term.action_dim
+ 
+-        if term_cfg.clip is not None:
++        clip = getattr(term_cfg, "clip", None)
++        if clip is not None and hasattr(action_term, "_clip"):
+             term_cfg.clip = action_term._clip[0].detach().cpu().numpy().tolist()
+ 
+         if action_name in ["JointPositionAction", "JointVelocityAction"]:
+@@ -70,14 +75,16 @@ def export_deploy_cfg(env: ManagerBasedRLEnv, log_dir):
+         # clean cfg
+         term_cfg = term_cfg.to_dict()
+ 
+-        for _ in ["class_type", "asset_name", "debug_vis", "preserve_order", "use_default_offset"]:
+-            del term_cfg[_]
++        for key in ["class_type", "asset_name", "debug_vis", "preserve_order", "use_default_offset"]:
++            if key in term_cfg:
++                del term_cfg[key]
+         cfg["actions"][action_name] = term_cfg
+ 
+-        if action_term._joint_ids == slice(None):
+-            cfg["actions"][action_name]["joint_ids"] = None
+-        else:
+-            cfg["actions"][action_name]["joint_ids"] = action_term._joint_ids
++        if hasattr(action_term, "_joint_ids"):
++            if action_term._joint_ids == slice(None):
++                cfg["actions"][action_name]["joint_ids"] = None
++            else:
++                cfg["actions"][action_name]["joint_ids"] = action_term._joint_ids
+ 
+     # --- observations ---
+     obs_names = env.observation_manager.active_terms["policy"]
